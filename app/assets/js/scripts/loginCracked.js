@@ -1,26 +1,22 @@
 /**
  * Script for login.ejs
  */
-const ConfigManager = require("./assets/js/configmanager")
-// FIXME: Possible clash with original variable names
 // Validation Regexes.
-const validUsername = /^[a-zA-Z0-9_]{1,16}$/
-const basicEmail = /^\S+@\S+\.\S+$/
+const _validUsername = /^[a-zA-Z0-9_]{1,16}$/
 //const validEmail          = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
 
 // Login Elements
-const loginCancelContainer = document.getElementById("loginCrackedCancelContainer")
-const loginCancelButton = document.getElementById("loginCrackedCancelButton")
-const loginEmailError = document.getElementById("loginCrackedEmailError")
-const loginUsername = document.getElementById("loginCrackedUsername")
-const checkmarkContainer = document.getElementById("crackedCheckmarkContainer")
-const loginRememberOption = document.getElementById("loginCrackedRememberOption")
-const loginButton = document.getElementById("loginCrackedButton")
-const loginForm = document.getElementById("loginCrackedForm")
+const _loginCancelContainer = document.getElementById("loginCrackedCancelContainer")
+const _loginCancelButton = document.getElementById("loginCrackedCancelButton")
+const _loginEmailError = document.getElementById("loginCrackedEmailError")
+const loginCrackedUsername = document.getElementById("loginCrackedUsername")
+const _checkmarkContainer = document.getElementById("crackedCheckmarkContainer")
+const _loginRememberOption = document.getElementById("loginCrackedRememberOption")
+const _loginButton = document.getElementById("loginCrackedButton")
+const _loginForm = document.getElementById("loginCrackedForm")
 
-// Control variables.
-let lu = false,
-    lp = false
+// Control variable.
+let _lu = false
 
 /**
  * Show a login error.
@@ -28,7 +24,7 @@ let lu = false,
  * @param {HTMLElement} element The element on which to display the error.
  * @param {string} value The error text.
  */
-function showError(element, value) {
+function _showError(element, value) {
     element.innerHTML = value
     element.style.opacity = 1
 }
@@ -38,7 +34,7 @@ function showError(element, value) {
  *
  * @param {HTMLElement} element The element to shake.
  */
-function shakeError(element) {
+function _shakeError(element) {
     if (element.style.opacity == 1) {
         element.classList.remove("shake")
         void element.offsetWidth
@@ -46,41 +42,40 @@ function shakeError(element) {
     }
 }
 
-// FIXME: Used in uibinder
 /**
  * Validate that an email field is neither empty nor invalid.
  *
  * @param {string} value The email value.
  */
-function validateEmail(value) {
+function _validateUsername(value) {
     if (value) {
-        if (!basicEmail.test(value) && !validUsername.test(value)) {
-            showError(loginEmailError, Lang.queryJS("login.error.invalidValue"))
-            loginDisabled(true)
-            lu = false
+        if (!_validUsername.test(value)) {
+            _showError(_loginEmailError, Lang.queryJS("login.error.invalidValue"))
+            _loginDisabled(true)
+            _lu = false
         } else {
-            loginEmailError.style.opacity = 0
-            lu = true
+            _loginEmailError.style.opacity = 0
+            _lu = true
             if (lp) {
-                loginDisabled(false)
+                _loginDisabled(false)
             }
         }
     } else {
-        lu = false
-        showError(loginEmailError, Lang.queryJS("login.error.requiredValue"))
-        loginDisabled(true)
+        _lu = false
+        _showError(_loginEmailError, Lang.queryJS("login.error.requiredValue"))
+        _loginDisabled(true)
     }
 }
 
 // Emphasize errors with shake when focus is lost.
-loginUsername.addEventListener("focusout", e => {
-    validateEmail(e.target.value)
-    shakeError(loginEmailError)
+loginCrackedUsername.addEventListener("focusout", e => {
+    _validateUsername(e.target.value)
+    _shakeError(_loginEmailError)
 })
 
 // Validate input for each field.
-loginUsername.addEventListener("input", e => {
-    validateEmail(e.target.value)
+loginCrackedUsername.addEventListener("input", e => {
+    _validateUsername(e.target.value)
 })
 
 /**
@@ -88,9 +83,9 @@ loginUsername.addEventListener("input", e => {
  *
  * @param {boolean} v True to enable, false to disable.
  */
-function loginDisabled(v) {
-    if (loginButton.disabled !== v) {
-        loginButton.disabled = v
+function _loginDisabled(v) {
+    if (_loginButton.disabled !== v) {
+        _loginButton.disabled = v
     }
 }
 
@@ -99,16 +94,16 @@ function loginDisabled(v) {
  *
  * @param {boolean} v True to enable, false to disable.
  */
-function loginLoading(v) {
+function _loginLoading(v) {
     if (v) {
-        loginButton.setAttribute("loading", v)
-        loginButton.innerHTML = loginButton.innerHTML.replace(
+        _loginButton.setAttribute("loading", v)
+        _loginButton.innerHTML = _loginButton.innerHTML.replace(
             Lang.queryJS("login.login"),
             Lang.queryJS("login.loggingIn"),
         )
     } else {
-        loginButton.removeAttribute("loading")
-        loginButton.innerHTML = loginButton.innerHTML.replace(
+        _loginButton.removeAttribute("loading")
+        _loginButton.innerHTML = _loginButton.innerHTML.replace(
             Lang.queryJS("login.loggingIn"),
             Lang.queryJS("login.login"),
         )
@@ -120,34 +115,35 @@ function loginLoading(v) {
  *
  * @param {boolean} v True to enable, false to disable.
  */
-function formDisabled(v) {
-    loginDisabled(v)
-    loginCancelButton.disabled = v
-    loginUsername.disabled = v
+function _formDisabled(v) {
+    _loginDisabled(v)
+    _loginCancelButton.disabled = v
+    loginCrackedUsername.disabled = v
     if (v) {
-        checkmarkContainer.setAttribute("disabled", v)
+        _checkmarkContainer.setAttribute("disabled", v)
     } else {
-        checkmarkContainer.removeAttribute("disabled")
+        _checkmarkContainer.removeAttribute("disabled")
     }
-    loginRememberOption.disabled = v
+    _loginRememberOption.disabled = v
 }
-
+/*
+// FIXME: What to do with these?
 let loginViewOnSuccess = VIEWS.landing
 let loginViewOnCancel = VIEWS.settings
 let loginViewCancelHandler
-
-// FIXME: Used in settings
+*/
+// FIXME: Used in settings, should be added to a new settings cracked login option
 function loginCrackedCancelEnabled(val) {
     if (val) {
-        $(loginCancelContainer).show()
+        $(_loginCancelContainer).show()
     } else {
-        $(loginCancelContainer).hide()
+        $(_loginCancelContainer).hide()
     }
 }
 
-loginCancelButton.onclick = e => {
+_loginCancelButton.onclick = e => {
     switchView(getCurrentView(), loginViewOnCancel, 500, 500, () => {
-        loginUsername.value = ""
+        loginCrackedUsername.value = ""
         loginCrackedCancelEnabled(false)
         if (loginViewCancelHandler != null) {
             loginViewCancelHandler()
@@ -157,26 +153,26 @@ loginCancelButton.onclick = e => {
 }
 
 // Disable default form behavior.
-loginForm.onsubmit = () => {
+_loginForm.onsubmit = () => {
     return false
 }
 
 // Bind login button behavior.
-loginButton.addEventListener("click", () => {
+_loginButton.addEventListener("click", () => {
     // Disable form.
-    formDisabled(true)
+    _formDisabled(true)
 
     // Show loading stuff.
-    loginLoading(true)
+    _loginLoading(true)
 
     const magicToken = "Sésame ouvre-toi"
-    // FIXME: Login logic, create fake account
+
     updateSelectedAccount(
         ConfigManager.addMojangAuthAccount(
-            generateUUID(loginUsername.value),
+            generateUUID(loginCrackedUsername.value),
             magicToken,
-            loginUsername.value,
-            loginUsername.value,
+            loginCrackedUsername.value,
+            loginCrackedUsername.value,
         ),
     )
 
@@ -185,7 +181,7 @@ loginButton.addEventListener("click", () => {
     }
     ConfigManager.save()
 
-    loginButton.innerHTML = loginButton.innerHTML.replace(
+    _loginButton.innerHTML = _loginButton.innerHTML.replace(
         Lang.queryJS("login.loggingIn"),
         Lang.queryJS("login.success"),
     )
@@ -200,15 +196,15 @@ loginButton.addEventListener("click", () => {
             loginViewOnSuccess = VIEWS.landing // Reset this for good measure.
             loginCrackedCancelEnabled(false) // Reset this for good measure.
             loginViewCancelHandler = null // Reset this for good measure.
-            loginUsername.value = ""
+            loginCrackedUsername.value = ""
             $(".circle-loader").toggleClass("load-complete")
             $(".checkmark").toggle()
-            loginLoading(false)
-            loginButton.innerHTML = loginButton.innerHTML.replace(
+            _loginLoading(false)
+            _loginButton.innerHTML = _loginButton.innerHTML.replace(
                 Lang.queryJS("login.success"),
                 Lang.queryJS("login.login"),
             )
-            formDisabled(false)
+            _formDisabled(false)
         })
     }, 1000)
 })

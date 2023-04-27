@@ -51,6 +51,7 @@ loginOptionsCancelButton.onclick = e => {
         // No cleanup needed for Microsoft.
         loginUsername.value = ""
         loginPassword.value = ""
+        loginCrackedUsername.value = ""
         if (loginOptionsViewCancelHandler != null) {
             loginOptionsViewCancelHandler()
             loginOptionsViewCancelHandler = null
