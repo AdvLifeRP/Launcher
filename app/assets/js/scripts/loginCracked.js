@@ -1,6 +1,7 @@
 /**
- * Script for login.ejs
+ * Script for loginCracked.ejs
  */
+const { generateV4 } = require("@minecraft-js/uuid")
 // Validation Regexes.
 const _validUsername = /^[a-zA-Z0-9_]{1,16}$/
 //const validEmail          = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
@@ -14,9 +15,6 @@ const _checkmarkContainer = document.getElementById("crackedCheckmarkContainer")
 const _loginRememberOption = document.getElementById("loginCrackedRememberOption")
 const _loginButton = document.getElementById("loginCrackedButton")
 const _loginForm = document.getElementById("loginCrackedForm")
-
-// Control variable.
-let _lu = false
 
 /**
  * Show a login error.
@@ -52,16 +50,11 @@ function _validateUsername(value) {
         if (!_validUsername.test(value)) {
             _showError(_loginEmailError, Lang.queryJS("login.error.invalidValue"))
             _loginDisabled(true)
-            _lu = false
         } else {
             _loginEmailError.style.opacity = 0
-            _lu = true
-            if (lp) {
-                _loginDisabled(false)
-            }
+            _loginDisabled(false)
         }
     } else {
-        _lu = false
         _showError(_loginEmailError, Lang.queryJS("login.error.requiredValue"))
         _loginDisabled(true)
     }
@@ -126,12 +119,11 @@ function _formDisabled(v) {
     }
     _loginRememberOption.disabled = v
 }
-/*
-// FIXME: What to do with these?
-let loginViewOnSuccess = VIEWS.landing
-let loginViewOnCancel = VIEWS.settings
-let loginViewCancelHandler
-*/
+
+let loginCrackedViewOnSuccess = VIEWS.landing
+let loginCrackedViewOnCancel = VIEWS.settings
+let loginCrackedViewCancelHandler
+
 // FIXME: Used in settings, should be added to a new settings cracked login option
 function loginCrackedCancelEnabled(val) {
     if (val) {
@@ -142,12 +134,12 @@ function loginCrackedCancelEnabled(val) {
 }
 
 _loginCancelButton.onclick = e => {
-    switchView(getCurrentView(), loginViewOnCancel, 500, 500, () => {
+    switchView(getCurrentView(), loginCrackedViewOnCancel, 500, 500, () => {
         loginCrackedUsername.value = ""
         loginCrackedCancelEnabled(false)
-        if (loginViewCancelHandler != null) {
-            loginViewCancelHandler()
-            loginViewCancelHandler = null
+        if (loginCrackedViewCancelHandler != null) {
+            loginCrackedViewCancelHandler()
+            loginCrackedViewCancelHandler = null
         }
     })
 }
@@ -169,7 +161,7 @@ _loginButton.addEventListener("click", () => {
 
     updateSelectedAccount(
         ConfigManager.addMojangAuthAccount(
-            generateUUID(loginCrackedUsername.value),
+            generateV4().toString(),
             magicToken,
             loginCrackedUsername.value,
             loginCrackedUsername.value,
@@ -188,14 +180,14 @@ _loginButton.addEventListener("click", () => {
     $(".circle-loader").toggleClass("load-complete")
     $(".checkmark").toggle()
     setTimeout(() => {
-        switchView(VIEWS.login, loginViewOnSuccess, 500, 500, async () => {
+        switchView(VIEWS.loginCracked, loginCrackedViewOnSuccess, 500, 500, async () => {
             // Temporary workaround
-            if (loginViewOnSuccess === VIEWS.settings) {
+            if (loginCrackedViewOnSuccess === VIEWS.settings) {
                 await prepareSettings()
             }
-            loginViewOnSuccess = VIEWS.landing // Reset this for good measure.
+            loginCrackedViewOnSuccess = VIEWS.landing // Reset this for good measure.
             loginCrackedCancelEnabled(false) // Reset this for good measure.
-            loginViewCancelHandler = null // Reset this for good measure.
+            loginCrackedViewCancelHandler = null // Reset this for good measure.
             loginCrackedUsername.value = ""
             $(".circle-loader").toggleClass("load-complete")
             $(".checkmark").toggle()
